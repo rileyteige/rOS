@@ -27,7 +27,7 @@ image/pad:
 	@echo "Pad file generated."
 
 GCCWARN = -Wall -Wextra -Werror
-CFLAGS = $(GCCWARN) -m32 -nostdlib -nostartfiles -nodefaultlibs -I./include
+CFLAGS = $(GCCWARN) -m32 -nostdlib -nostartfiles -nodefaultlibs -I./kernel/include
 
 %.o: %.c
 	@gcc $(CFLAGS) -c -o $@ $<
