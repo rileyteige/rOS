@@ -13,11 +13,6 @@
  #                                                                   #
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-SYSTEM = $(patsubst %.c,%.o,$(wildcard kernel/system/*.c))
-VIDEO = $(patsubst %.c,%.o,$(wildcard kernel/video/*.c))
-
-SUBMODULES = ${SYSTEM} ${VIDEO}
-
 all: bin/floppy.img bochsrc.txt
 
  ################
@@ -41,6 +36,11 @@ image/pad:
  ################
  #    kernel    #
  ################
+
+SYSTEM = $(patsubst %.c,%.o,$(wildcard kernel/system/*.c))
+VIDEO = $(patsubst %.c,%.o,$(wildcard kernel/video/*.c))
+
+SUBMODULES = ${SYSTEM} ${VIDEO}
 
 LDFLAGS = -m elf_i386
 

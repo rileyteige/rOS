@@ -1,4 +1,4 @@
-global start							; making entry point visible to linker
+global _main							; making entry point visible to linker
 global magic							; we will use this in kmain
 global mbd								; we will use this in kmain
 
@@ -21,7 +21,7 @@ align 4
 ; reserve initial kernel stack space
 STACKSIZE equ 0x4000					; that's 16k.
 
-start:
+_main:
 	mov esp, stack + STACKSIZE			; set up the stack.
 	mov [magic], eax					; Multiboot magic number
 	mov [mbd], eax						; Multiboot info structure
