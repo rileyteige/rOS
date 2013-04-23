@@ -43,7 +43,7 @@ kernel/start.o: kernel/start.s
 
 clean-temp:
 	@echo "Cleaning temporary files..."
-	@rm -f core *~ image/pad */*~ */*/*~
+	rm -f core image/pad $(shell find . -name "*~")
 	@echo "Cleaned temporary files."
 
 clean-objects:
