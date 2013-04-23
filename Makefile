@@ -15,9 +15,11 @@ bin/floppy.img: image/kernel.bin image/pad
 	@cp image/floppy.img bin/floppy.img
 	@echo "Kernel image stored in ./bin/floppy.img, ready to boot"
 
+LDFLAGS = -m elf_i386
+
 image/kernel.bin: kernel/start.o kernel/kmain.o ${SUBMODULES} kernel/link.ld
 	@echo "Linking kernel source files..."
-	@ld -T kernel/link.ld -o image/kernel.bin kernel/*.o ${SUBMODULES}
+	@ld -T kernel/link.ld ${LDFLAGS} -o image/kernel.bin kernel/*.o ${SUBMODULES}
 
 image/pad:
 	@echo "Generating pad file..."
