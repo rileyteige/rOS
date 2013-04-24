@@ -15,6 +15,7 @@ extern unsigned int strlen(const char *str);
 
 /* Descriptor Tables */
 extern void gdt_init();
+extern void idt_init();
 
 /* Interrupts Flag */
 extern void cli();

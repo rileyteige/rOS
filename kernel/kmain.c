@@ -11,6 +11,7 @@ void kmain()
     cli();    
 
     gdt_init();
+    idt_init();
 
     clear();
     int i = 0;

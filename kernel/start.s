@@ -49,6 +49,13 @@ gdt_refresh2:
     mov ss, ax
     ret
 
+; Interrupt Descriptor Table
+global idt_refresh
+extern idt_ptr
+idt_refresh:
+    lidt [idt_ptr]
+    ret
+
 section .bss
 
 align 4
