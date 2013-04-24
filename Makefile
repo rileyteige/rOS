@@ -30,7 +30,6 @@ bin/floppy.img: image/kernel.bin image/pad
 	@echo "Kernel image stored in ./bin/floppy.img, ready to boot"
 
 image/pad:
-	@echo "Generating pad file..."
 	@dd if=/dev/zero of=image/pad bs=1 count=750 2> /dev/null
 
  ################
