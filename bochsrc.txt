@@ -1,3 +1,5 @@
 floppya: 1_44=floppy.img, status=inserted
 boot: floppy
 display_library: sdl
+romimage: file=$BXSHARE/BIOS-bochs-latest
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
