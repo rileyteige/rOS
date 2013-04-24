@@ -21,3 +21,6 @@ bin
 image/floppy.img
 image/kernel.bin
 image/pad
+
+# Temporaries
+*~

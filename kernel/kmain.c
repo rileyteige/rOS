@@ -11,7 +11,6 @@ void kmain()
 	cli();    
 
     gdt_init();
-    //idt_init();
 
 	clear();
 	int i = 0;
@@ -20,4 +19,6 @@ void kmain()
 	    put_int(i);
 	    put_char('\n');
 	}
+	
+	sti();
 }
