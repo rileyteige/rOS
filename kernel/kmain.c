@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 #include <system.h>
 #include <video.h>
 
@@ -7,10 +5,13 @@ void kmain()
 {
 	extern uint32_t magic;
 
-	if (magic != 0x2BADB002)
+	if (magic != MULTIBOOT_MAGIC)
 		return;
 
-	set_interrupt_status(DISABLED);
+	cli();    
+
+    gdt_init();
+    //idt_init();
 
 	clear();
 	int i = 0;
@@ -19,6 +20,4 @@ void kmain()
 	    put_int(i);
 	    put_char('\n');
 	}
-	
-	set_interrupt_status(ENABLED);
 }

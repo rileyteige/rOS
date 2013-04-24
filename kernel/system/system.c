@@ -2,8 +2,6 @@
 
 #include <system.h>
 
-static interrupt_status current_interrupt_status = DISABLED;
-
 int max(int a, int b)
 {
     return a > b ? a : b;
@@ -29,6 +27,15 @@ void* memcpy(void* dest, const void* src, size_t count)
     return dest;
 }
 
+void* memset(void* loc, int val, size_t size)
+{
+    size_t i = 0;
+    for (i = 0; i < size; i++)
+        ((int*)loc)[i] = val;
+    
+    return loc;
+}
+
 unsigned int strlen(const char *str)
 {
     int i = 0;
@@ -37,26 +44,12 @@ unsigned int strlen(const char *str)
     return i;
 }
 
-void clear_interrupts()
+void cli()
 {
     asm("cli");
 }
 
-void set_interrupts()
+void sti()
 {
     asm("sti");
-}
-
-interrupt_status set_interrupt_status(interrupt_status status)
-{
-    interrupt_status old_status = current_interrupt_status;
-    
-    if (status == DISABLED) {
-        clear_interrupts();
-    } else {
-        set_interrupts();
-    }
-    
-    current_interrupt_status = status;
-    return old_status;
 }

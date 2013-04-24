@@ -26,12 +26,28 @@ _main:
 	mov [magic], eax					; Multiboot magic number
 	mov [mbd], eax						; Multiboot info structure
 
+    cli
 	call kmain							; call kernel proper
 
 	cli
 .hang:
 	hlt									; halt machine should kernel return
 	jmp .hang
+
+; Global Descriptor Table
+global gdt_refresh
+extern gdt_ptr
+gdt_refresh:
+    lgdt [gdt_ptr]
+    jmp 0x08:gdt_refresh2
+gdt_refresh2:
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    ret
 
 section .bss
 
