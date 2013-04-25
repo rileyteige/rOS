@@ -25,6 +25,7 @@ extern void irq_unregister_handler(int irq);
 
 /* Devices */
 extern void timer_init();
+extern void timer_set_frequency(int hz);
 
 /* Ports */
 extern uint8_t inportb(uint16_t port);

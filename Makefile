@@ -56,7 +56,7 @@ kernel/start.o: kernel/start.s
 	@nasm ${ASMFLAGS} -o kernel/start.o kernel/start.s
 
 GCCWARN = -Wall -Wextra -Werror
-CFLAGS = ${GCCWARN} -m32 -nostdlib -nostartfiles -nodefaultlibs -I./kernel/include
+CFLAGS = ${GCCWARN} -m32 -nostdlib -Wno-unused-parameter -nostartfiles -nodefaultlibs -I./kernel/include
 
 %.o: %.c
 	@echo "Compiling $<..."
