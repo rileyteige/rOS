@@ -19,6 +19,7 @@ void kmain()
     
     /* Device drivers */
     timer_init();
+    keyboard_init();
     
     /* Let the games begin */
     sti();

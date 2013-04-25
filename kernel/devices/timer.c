@@ -35,8 +35,6 @@ void timer_interrupt_handler(struct regs* r)
     if (tick == TIMER_FREQUENCY * 10) {
         time++;
         tick = 0;
-        reset();
-        put_int(time);
     }
 }
 

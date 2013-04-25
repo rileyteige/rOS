@@ -45,7 +45,7 @@ SUBMODULES = ${SYSTEM} ${VIDEO} ${CPU} ${DEVICES}
 
 LDFLAGS = -m elf_i386
 
-image/kernel.bin: ${SUBMODULES} kernel/start.o kernel/kmain.o kernel/link.ld
+image/kernel.bin: ${SUBMODULES} kernel/kmain.o kernel/start.o kernel/link.ld
 	@echo "Linking kernel source files..."
 	@ld -T kernel/link.ld ${LDFLAGS} -o image/kernel.bin kernel/*.o ${SUBMODULES}
 

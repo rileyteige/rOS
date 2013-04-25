@@ -27,6 +27,8 @@ extern void irq_unregister_handler(int irq);
 extern void timer_init();
 extern void timer_set_frequency(int hz);
 
+extern void keyboard_init();
+
 /* Ports */
 extern uint8_t inportb(uint16_t port);
 extern void outportb(uint16_t port, uint8_t data);
