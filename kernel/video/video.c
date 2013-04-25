@@ -79,6 +79,13 @@ void clear()
         videoram[i] = 0;
 }
 
+void reset()
+{
+    clear();
+    video_row = 0;
+    video_col = 0;
+}
+
 void put_string(const char *str)
 {
     int len = strlen(str);

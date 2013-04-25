@@ -108,14 +108,31 @@ void irq_init()
     register_irq_entries();
 }
 
+int x = 0;
+int s = 0;
+
 void irq_router(struct regs* r)
 {
+    int int_num = r->int_num;
+    
     cli();
     
-    if (r != NULL)
-        r = r;
+    if ((++x) % 460 == 0) {
+        reset();
+        put_int(++s);
+        x = 0;
+    }
     
-    put_char('a');
+    irq_handler_t handler;
+    
+    if (int_num < 32 || int_num > 47) {
+        handler = NULL;
+    } else {
+        handler = irq_routines[int_num - 32];
+    }
+    
+    if (handler != NULL)
+        handler(r);
     
     irq_finish();
     
