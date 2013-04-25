@@ -97,6 +97,11 @@ void pic_remap()
     outportb(PIC2_DATA, mask2);
 }
 
+void irq_finish()
+{
+    outportb(0x20, 0x20);
+}
+
 void irq_init()
 {
     pic_remap();
@@ -111,6 +116,8 @@ void irq_router(struct regs* r)
         r = r;
     
     put_char('a');
-       
+    
+    irq_finish();
+    
     sti();
 }
