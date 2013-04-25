@@ -39,8 +39,9 @@ image/pad:
 SYSTEM = $(patsubst %.c,%.o,$(wildcard kernel/system/*.c))
 VIDEO = $(patsubst %.c,%.o,$(wildcard kernel/video/*.c))
 CPU = $(patsubst %.c,%.o,$(wildcard kernel/cpu/*.c))
+DEVICES = $(patsubst %.c,%.o,$(wildcard kernel/devices/*.c))
 
-SUBMODULES = ${SYSTEM} ${VIDEO} ${CPU}
+SUBMODULES = ${SYSTEM} ${VIDEO} ${CPU} ${DEVICES}
 
 LDFLAGS = -m elf_i386
 

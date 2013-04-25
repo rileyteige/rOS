@@ -20,6 +20,11 @@ extern void idt_init();
 extern void idt_set_entry(uint8_t idx, uint32_t base, uint16_t selector, uint8_t flags);
 
 extern void irq_init();
+extern void irq_register_handler(int irq, irq_handler_t handler);
+extern void irq_unregister_handler(int irq);
+
+/* Devices */
+extern void timer_init();
 
 /* Ports */
 extern uint8_t inportb(uint16_t port);

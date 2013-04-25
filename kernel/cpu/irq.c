@@ -1,6 +1,4 @@
 #include <system.h>
-#include <types.h>
-#include <video.h>
 
 #define NUM_IRQ_ROUTINES 16
 
@@ -41,6 +39,16 @@ void_fn irq_functions[NUM_IRQ_ROUTINES] = {
 };
 
 irq_handler_t irq_routines[NUM_IRQ_ROUTINES] = { NULL };
+
+void irq_register_handler(int irq, irq_handler_t handler)
+{
+    irq_routines[irq] = handler;
+}
+
+void irq_unregister_handler(int irq)
+{
+    irq_routines[irq] = 0;
+}
 
 #define CODE_SELECTOR 0x08
 #define IRQ_FLAGS 0x8E
@@ -108,20 +116,11 @@ void irq_init()
     register_irq_entries();
 }
 
-int x = 0;
-int s = 0;
-
 void irq_router(struct regs* r)
 {
     int int_num = r->int_num;
     
     cli();
-    
-    if ((++x) % 460 == 0) {
-        reset();
-        put_int(++s);
-        x = 0;
-    }
     
     irq_handler_t handler;
     

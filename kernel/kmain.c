@@ -12,10 +12,15 @@ void kmain()
 
     clear();
 
+    /* Core modules */
     gdt_init();
     idt_init();
     irq_init();
     
+    /* Device drivers */
+    timer_init();
+    
+    /* Let the games begin */
     sti();
     
     for (;;);
