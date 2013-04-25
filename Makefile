@@ -1,13 +1,13 @@
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
  #                                                                   #
- # rOS - A scratch compiler.                                         #
+ # rOS - A scratch operating system.                                 #
  #                                                                   #
  #                                                                   #
  # Author: Riley P. Teige                                            #
  # Start Date: 4/20/2013                                             #
  #                                                                   #
- # This is just a scratch compiler I'm writing in C, because I like  #
- # to get my hands dirty. I figure I'll learn a thing or two about   #
+ # This is just a scratch OS I am writing in C, because I like to    #
+ # get my hands dirty. I figure I'll learn a thing or two about      #
  # both OS development/design as well as large-scale project manage- #
  # ment in the process.                                              #
  #                                                                   #
