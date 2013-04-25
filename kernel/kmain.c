@@ -10,16 +10,13 @@ void kmain()
 
     cli();    
 
+    clear();
+
     gdt_init();
     idt_init();
-
-    clear();
-    int i = 0;
-    for (i = 0; i <= 100; i += 5)
-    {
-        put_int(i);
-        put_char('\n');
-    }
+    irq_init();
     
     sti();
+    
+    for (;;);
 }

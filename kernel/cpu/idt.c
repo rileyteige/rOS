@@ -9,7 +9,7 @@ struct idt_entry_t {
     uint8_t zero;      /* Should always be zero */
     uint8_t type_attr; /* Type/Attributes */
     uint16_t offset_2; /* Offset bits 16..31 */
-};
+} __attribute__((packed));
 
 /* IDT */
 struct idt_t {
@@ -35,9 +35,9 @@ void idt_set_entry(uint8_t idx, uint32_t base, uint16_t selector, uint8_t flags)
 
 void idt_init()
 {
-    idt_ptr.limit = sizeof(struct idt_entry_t) * 256 - 1;
+    idt_ptr.limit = sizeof(struct idt_entry_t) * NUM_IDT_ENTRIES - 1;
     idt_ptr.base = (uint32_t)&idt;
-    memset(&idt, 0, sizeof(struct idt_entry_t) * 256);
+    memset(&idt, 0, sizeof(struct idt_entry_t) * NUM_IDT_ENTRIES);
     
     idt_refresh();
 }

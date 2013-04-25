@@ -36,6 +36,18 @@ void* memset(void* loc, int val, size_t size)
     return loc;
 }
 
+uint8_t inportb(uint16_t port)
+{
+    uint8_t ret;
+    asm volatile ("inb %1, %0" : "=a" (ret) : "dN" (port));
+    return ret;
+}
+
+void outportb(uint16_t port, uint8_t data)
+{
+    asm volatile ("outb %1, %0" : : "dN" (port), "a" (data));
+}
+
 unsigned int strlen(const char *str)
 {
     int i = 0;

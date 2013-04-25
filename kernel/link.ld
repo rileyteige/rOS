@@ -1,29 +1,40 @@
+/* This linker script is courtesy of GitHub repo klange/osdev */
+
 ENTRY (_main)
+
+phys = 0x00100000;
 
 SECTIONS
 {
-	. = 0x00100000;
 
-	.text ALIGN (0x1000) :
+	.text phys : AT(phys)
 	{
+	    code = .;
 		*(.text)
+		*(.rodata)
+		. = ALIGN(4096);
 	}
 
-	.rodata ALIGN (0x1000) :
+	.data : AT(phys + (data - code))
 	{
-		*(.rodata*)
-	}
-
-	.data ALIGN (0x1000) :
-	{
+	    data = .;
 		*(.data)
+		. = ALIGN(4096);
 	}
 
-	.bss :
+	.bss : AT(phys + (bss - code))
 	{
-		sbss = .;
-		*(COMMON)
+	    bss = .;
 		*(.bss)
-		ebss = .;
+		. = ALIGN(4096);
+	}
+	
+	end = .;
+	
+	/DISCARD/ :
+	{
+	    *(.comment)
+	    *(.eh_frame)
+	    *(.note.gnu.build-id)
 	}
 }

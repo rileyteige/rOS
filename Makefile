@@ -44,20 +44,21 @@ SUBMODULES = ${SYSTEM} ${VIDEO} ${CPU}
 
 LDFLAGS = -m elf_i386
 
-image/kernel.bin: kernel/start.o kernel/kmain.o ${SUBMODULES} kernel/link.ld
+image/kernel.bin: ${SUBMODULES} kernel/start.o kernel/kmain.o kernel/link.ld
 	@echo "Linking kernel source files..."
 	@ld -T kernel/link.ld ${LDFLAGS} -o image/kernel.bin kernel/*.o ${SUBMODULES}
 
 ASMFLAGS = -f elf
 
 kernel/start.o: kernel/start.s
-	@echo "Assembling kernel loader code..."
+	@echo "Assembling kernel bootstrapper..."
 	@nasm ${ASMFLAGS} -o kernel/start.o kernel/start.s
 
 GCCWARN = -Wall -Wextra -Werror
 CFLAGS = ${GCCWARN} -m32 -nostdlib -nostartfiles -nodefaultlibs -I./kernel/include
 
 %.o: %.c
+	@echo "Compiling $<..."
 	@gcc ${CFLAGS} -c -o $@ $<
 
  ###############

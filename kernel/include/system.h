@@ -15,10 +15,20 @@ extern unsigned int strlen(const char *str);
 
 /* Descriptor Tables */
 extern void gdt_init();
+
 extern void idt_init();
+extern void idt_set_entry(uint8_t idx, uint32_t base, uint16_t selector, uint8_t flags);
+
+extern void irq_init();
+
+/* Ports */
+extern uint8_t inportb(uint16_t port);
+extern void outportb(uint16_t port, uint8_t data);
 
 /* Interrupts Flag */
 extern void cli();
 extern void sti();
+
+#define NULL ((void*)0)
 
 #endif // __SYSTEM_H
