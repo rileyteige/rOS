@@ -36,41 +36,6 @@ void put_char(char c)
     next_char();
 }
 
-unsigned int max_power_of_ten(unsigned int num)
-{
-    unsigned int rval = 1;
-    while (num)
-    {
-        rval *= 10;
-        num /= 10;
-    }
-    return rval;
-}
-
-void put_int(int x)
-{
-    if (x < 0)
-    {
-        put_char('-');
-        x = abs(x);
-    }
-    else if (x == 0)
-    {
-        put_char('0');
-        return;
-    }
-    
-    unsigned int pow10 = max_power_of_ten(x) / 10;
-    
-    while (pow10 > 0)
-    {
-        unsigned int digit = x / pow10;
-        put_char(digit + '0');
-        x -= digit * pow10;
-        pow10 /= 10;
-    }
-}
-
 void clear()
 {
     volatile unsigned char *videoram = (unsigned char*)VIDEO_RAM_LOCATION;
@@ -84,12 +49,4 @@ void reset()
     clear();
     video_row = 0;
     video_col = 0;
-}
-
-void put_string(const char *str)
-{
-    int len = strlen(str);
-    int i = 0;
-    for (i = 0; i < len; i++)
-        put_char(str[i]);
 }

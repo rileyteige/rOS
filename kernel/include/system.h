@@ -40,6 +40,9 @@ extern void outportb(uint16_t port, uint8_t data);
 extern void cli();
 extern void sti();
 
+/* kprintf */
+extern void kprintf(const char *format, ...);
+
 #define NULL ((void*)0)
 
 #endif // __SYSTEM_H
