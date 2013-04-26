@@ -5,7 +5,12 @@
 
 void dump_memory_map(memory_map_t* mmap)
 {
-    kprintf("%d %d %d %d %s\n", mmap->base_addr_low, mmap->length_low / 1024, mmap->base_addr_high, mmap->length_high / 1024, mmap->type == 1 ? "Available" : "Unavailable");
+    kprintf("%d %d %d %d %s\n",
+        mmap->base_addr_low,
+        mmap->length_low / 1024,
+        mmap->base_addr_high,
+        mmap->length_high / 1024,
+        mmap->type == 1 ? "Available" : "Unavailable");
 }
 
 void process_memory_map(multiboot_info_t* mbt)
