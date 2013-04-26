@@ -1,6 +1,4 @@
 global _main							; making entry point visible to linker
-global magic							; we will use this in kmain
-global mbd								; we will use this in kmain
 
 extern kmain							; kmain is defined in kmain.c
 
@@ -13,6 +11,7 @@ CHECKSUM	equ -(MAGIC + FLAGS)
 
 section .text
 
+bits 32
 align 4
 	dd MAGIC
 	dd FLAGS
@@ -23,8 +22,8 @@ STACKSIZE equ 0x4000					; that's 16k.
 
 _main:
 	mov esp, stack + STACKSIZE			; set up the stack.
-	mov [magic], eax					; Multiboot magic number
-	mov [mbd], eax						; Multiboot info structure
+	push eax                            ; Magic
+	push ebx                            ; Multiboot header
 
     cli
 	call kmain							; call kernel proper

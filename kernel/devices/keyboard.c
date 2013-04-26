@@ -19,9 +19,7 @@ uint8_t accept_key()
 
 void keyboard_interrupt_handler(struct regs* r)
 {
-    uint8_t key = accept_key();
-    put_int(key);
-    put_char(' ');
+    accept_key();
 }
 
 void keyboard_init()

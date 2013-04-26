@@ -1,7 +1,7 @@
 #ifndef __SYSTEM_H
 #define __SYSTEM_H
 
-#include <grub.h>
+#include <multiboot.h>
 #include <types.h>
 
 extern int max(int a, int b);
@@ -12,6 +12,9 @@ extern void* memcpy(void* dest, const void* src, size_t count);
 extern void* memset(void* loc, int val, size_t size);
 
 extern unsigned int strlen(const char *str);
+
+/* Memory map */
+extern void process_memory_map(multiboot_info_t* mbd);
 
 /* Descriptor Tables */
 extern void gdt_init();

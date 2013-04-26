@@ -1,16 +1,16 @@
+#include <multiboot.h>
 #include <system.h>
 #include <video.h>
 
-void kmain()
+void kmain(multiboot_info_t* mbt, unsigned int magic)
 {
-    extern uint32_t magic;
-
-    if (magic != MULTIBOOT_MAGIC)
+    if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
         return;
 
-    cli();    
-
-    clear();
+    cli();
+    reset();
+    
+    process_memory_map(mbt);
 
     /* Core modules */
     gdt_init();
