@@ -33,6 +33,11 @@ _main:
 	hlt									; halt machine should kernel return
 	jmp .hang
 
+global halt_execution
+halt_execution:
+    hlt
+    jmp halt_execution
+
 ; Global Descriptor Table
 global gdt_refresh
 extern gdt_ptr

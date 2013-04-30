@@ -3,6 +3,7 @@
 
 #include <multiboot.h>
 #include <types.h>
+#include <va_list.h>
 
 extern int max(int a, int b);
 extern int min(int a, int b);
@@ -42,6 +43,22 @@ extern void sti();
 
 /* kprintf */
 extern void kprintf(const char *format, ...);
+extern void kvprintf(const char *format, va_list args);
+
+/* Dynamic kernel memory */
+extern void* kmalloc(size_t bytes);
+extern void kfree(void* ptr);
+
+/* Debug */
+
+#define assert(x) do { \
+        if (!(x)) { \
+            panic("Assertion failed: %s\n", #x); \
+        } \
+    } while (0);
+
+extern void panic(const char *format, ...);
+extern void halt_execution();
 
 #define NULL ((void*)0)
 

@@ -45,12 +45,10 @@ void put_string(const char *str)
         put_char(str[i]);
 }
 
-extern void kprintf(const char *format, ...)
+extern void kvprintf(const char *format, va_list args)
 {
     int i = 0;
     int len = strlen(format);
-    va_list args;
-    va_start(args, format);
     for (i = 0; i < len && format[i] != '\0'; i++)
     {
         if (format[i] != '%')
@@ -80,5 +78,12 @@ extern void kprintf(const char *format, ...)
                 break;
         }
     }
+}
+
+extern void kprintf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    kvprintf(format, args);
     va_end(args);
 }
