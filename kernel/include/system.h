@@ -53,7 +53,7 @@ extern void kfree(void* ptr);
 
 #define assert(x) do { \
         if (!(x)) { \
-            panic("Assertion failed: %s\n", #x); \
+            panic("Assertion failed: %s\n\nFile: %s\nLine: %d\n", #x, __FILE__, __LINE__); \
         } \
     } while (0);
 
