@@ -17,10 +17,11 @@ typedef struct heap_entry {
 
 typedef struct {
     heap_entry_t* first;
+    size_t size_available;
 } __attribute__((packed)) heap_t;
 
 static uint8_t heap_arr[HEAP_SIZE];
-static heap_t heap = { (heap_entry_t*)heap_arr };
+static heap_t heap = { (heap_entry_t*)heap_arr, HEAP_SIZE };
 
 /*
  * Aligns a number upward to the nearest value evenly
@@ -46,6 +47,11 @@ void heap_init()
     heap.first->flags = 0;
     
     memory_initialized = 1;
+}
+
+size_t entry_size(heap_entry_t* entry)
+{
+    return sizeof(heap_entry_t) - sizeof(void*) + entry->size;
 }
 
 /*
@@ -95,6 +101,8 @@ void* kmalloc(size_t bytes)
     heap_entry_t* entry = heap.first;
     uint32_t addr = -1;
     
+    assert(bytes <= heap.size_available);
+    
     bytes = align(bytes, 4);
     
     while (entry && (entry->size < bytes || entry->flags & HEAP_ENTRY_USED))
@@ -107,6 +115,8 @@ void* kmalloc(size_t bytes)
         split_heap_entry(entry, bytes);
     
     entry->flags |= HEAP_ENTRY_USED;
+
+    heap.size_available -= entry_size(entry);
     
     addr = align((int)&entry->data, 4);
     
@@ -126,6 +136,9 @@ void kfree(void* ptr)
     entry = ptr - align(sizeof(heap_entry_t) - sizeof(void*), 4);
     
     entry->flags ^= HEAP_ENTRY_USED;
+    heap.size_available += entry_size(entry);
+    
+    assert(heap.size_available <= HEAP_SIZE);
     
     if (entry->prev && !(entry->prev->flags & HEAP_ENTRY_USED)) {
         entry = entry->prev;
