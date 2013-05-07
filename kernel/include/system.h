@@ -5,6 +5,11 @@
 #include <types.h>
 #include <va_list.h>
 
+#define KB 1024
+
+/* Kernel heap size, in bytes */
+#define HEAP_SIZE 8 * KB
+
 extern int max(int a, int b);
 extern int min(int a, int b);
 extern int abs(int a);
@@ -46,6 +51,7 @@ extern void kprintf(const char *format, ...);
 extern void kvprintf(const char *format, va_list args);
 
 /* Dynamic kernel memory */
+extern void heap_init();
 extern void* kmalloc(size_t bytes);
 extern void kfree(void* ptr);
 
@@ -54,12 +60,15 @@ extern void tasking_init();
 extern uint32_t read_pc();
 
 /* Debug */
-
+#if 1
 #define assert(x) do { \
         if (!(x)) { \
             panic("Assertion failed: %s\n\nFile: %s\nLine: %d\n", #x, __FILE__, __LINE__); \
         } \
     } while (0);
+#else
+#define assert(x) 
+#endif
 
 extern void panic(const char *format, ...);
 extern void halt_execution();

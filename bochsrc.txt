@@ -1,4 +1,4 @@
-floppya: 1_44=floppy.img, status=inserted
+floppya: 2_88=floppy.img, status=inserted
 boot: floppy
 display_library: sdl
 romimage: file=$BXSHARE/BIOS-bochs-latest

@@ -18,8 +18,9 @@ void test_kmalloc_kfree()
     for(i = 0; i < 10; i++)
         kprintf("%d ", nums[i]);
     kprintf("\n");
-    kprintf("Testing kfree...\n");
+    kprintf("Calling kfree...\n");
     kfree(nums);
+    kprintf("kmalloc test passed.\n");
 }
 
 void kmain(multiboot_info_t* mbt, unsigned int magic)
@@ -29,13 +30,14 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
 
     cli();
     reset();
-    
-    process_memory_map(mbt);
 
     /* Core modules */
     gdt_init();
     idt_init();
     irq_init();
+    
+    /* Kernel heap */
+    heap_init();
     
     /* Drivers */
     timer_init();

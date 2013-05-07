@@ -3,44 +3,135 @@
 #include <types.h>
 #include <video.h>
 
-#define MEMORY_AVAILABLE 1
-#define MMAP_SIZE_THRESHOLD 1024
+#define HEAP_ENTRY_USED 1
 
 uint8_t memory_initialized = 0;
-memory_map_t kernel_mem;
 
-void dump_memory_map(memory_map_t* mmap)
+typedef struct heap_entry {
+    struct heap_entry* prev;
+    struct heap_entry* next;
+    size_t size;
+    uint8_t flags;
+    void* data;
+} __attribute__((packed)) heap_entry_t;
+
+typedef struct {
+    heap_entry_t* first;
+} __attribute__((packed)) heap_t;
+
+static uint8_t heap_arr[HEAP_SIZE];
+static heap_t heap = { (heap_entry_t*)heap_arr };
+
+/*
+ * Aligns a number upward to the nearest value evenly
+ * divisible by "align_to".
+ */
+static inline unsigned int align(unsigned int i, unsigned int align_to)
 {
-    kprintf("%d %d %d %d %s\n",
-        mmap->base_addr_low,
-        mmap->length_low / 1024,
-        mmap->base_addr_high,
-        mmap->length_high / 1024,
-        mmap->type == MEMORY_AVAILABLE ? "Available" : "Unavailable");
+    return i % align_to ? i + (align_to - i % align_to) : i;
 }
 
-void process_memory_map(multiboot_info_t* mbt)
+/*
+ * Heap initializer
+ */
+void heap_init()
 {
+    kprintf("Initializing kernel heap...\n");
+
+    size_t heap_header_size = align(sizeof(heap_entry_t) - sizeof(void*), 4);
+    
+    heap.first->prev = NULL;
+    heap.first->next = NULL;
+    heap.first->size = HEAP_SIZE - heap_header_size;
+    heap.first->flags = 0;
+    
     memory_initialized = 1;
-    memory_map_t* mmap = (memory_map_t*)mbt->mmap_addr;
-    while ((uint32_t)mmap < (uint32_t)mbt->mmap_addr + mbt->mmap_length)
-    {
-        dump_memory_map(mmap);
-        
-        if (mmap->type == MEMORY_AVAILABLE && mmap->length_low / 1024 > MMAP_SIZE_THRESHOLD)
-            kernel_mem = *mmap;
-            
-        mmap = (memory_map_t*) ((uint32_t)mmap + mmap->size + sizeof(uint32_t));
-    }
 }
 
+/*
+ * Splits a heap entry into two blocks, one equal to the
+ * requested size, the other representing the space remaining
+ * after removing the requested size as well as making room
+ * for bookkeeping.
+ */
+void split_heap_entry(heap_entry_t* old_entry, size_t size)
+{
+    assert(old_entry != NULL);
+    
+    uint32_t new_entry_addr = align((int)&old_entry->data, 4) + size;
+    heap_entry_t* new_entry = (heap_entry_t*)new_entry_addr;
+    
+    assert(new_entry != NULL);
+    
+    new_entry->prev = old_entry;
+    new_entry->next = old_entry->next;
+    old_entry->next = new_entry;
+  
+    if (new_entry->next)
+        new_entry->next->prev = new_entry;
+    
+    new_entry->size = old_entry->size - size - align(sizeof(heap_entry_t) - sizeof(void*), 4);
+    old_entry->size = size;
+}
+
+/*
+ * Joins one heap entry into the next.
+ */
+void join_heap_entry(heap_entry_t* entry)
+{
+    assert(entry->next != NULL);
+    /*
+     * Simply increase the size of the entry to encapsulate
+     * the next entry; no need to alter the data.
+     */
+    entry->size += entry->next->size + align(sizeof(heap_entry_t) - sizeof(void*), 4);
+}
+
+/*
+ * Implements first-fit dynamic memory allocation
+ */
 void* kmalloc(size_t bytes)
 {
-    return NULL;
+    heap_entry_t* entry = heap.first;
+    uint32_t addr = -1;
+    
+    bytes = align(bytes, 4);
+    
+    while (entry && (entry->size < bytes || entry->flags & HEAP_ENTRY_USED))
+        entry = entry->next;
+    
+    if (entry == NULL)
+        kprintf("Entry was null.\n");
+    
+    if (entry->size > bytes)
+        split_heap_entry(entry, bytes);
+    
+    entry->flags |= HEAP_ENTRY_USED;
+    
+    addr = align((int)&entry->data, 4);
+    
+    return (void*)addr;
 }
 
+/*
+ * Marks a heap entry as unused, joining together unused neighbors.
+ */
 void kfree(void* ptr)
 {
+    heap_entry_t* entry = NULL;
+    
     assert(ptr != NULL);
     assert(memory_initialized);
+    
+    entry = ptr - align(sizeof(heap_entry_t) - sizeof(void*), 4);
+    
+    entry->flags ^= HEAP_ENTRY_USED;
+    
+    if (entry->prev && !(entry->prev->flags & HEAP_ENTRY_USED)) {
+        entry = entry->prev;
+        join_heap_entry(entry->prev);
+    }
+    
+    if (entry->next && !(entry->next->flags & HEAP_ENTRY_USED))
+        join_heap_entry(entry);
 }
