@@ -69,6 +69,15 @@ idt_refresh:
     lidt [idt_ptr]
     ret
 
+; ISR Functions
+%macro ISR 1
+    global _isr%1
+    _isr%1:
+        cli
+        push byte %1
+        jmp 0x08:isr_router_call
+%endmacro
+
 ; IRQ Functions
 %macro IRQ 2
     global _irq%1
@@ -95,6 +104,13 @@ IRQ 12, 44
 IRQ 13, 45
 IRQ 14, 46
 IRQ 15, 47
+
+extern isr_router
+isr_router_call:
+    pushad
+    popad
+    add esp, 8
+    iret
 
 extern irq_router
 irq_router_call:
