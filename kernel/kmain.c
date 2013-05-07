@@ -37,8 +37,9 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
     idt_init();
     irq_init();
     
-    /* Device drivers */
+    /* Drivers */
     timer_init();
+    tasking_init();
     keyboard_init();
     
     /* Let the games begin */

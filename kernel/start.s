@@ -1,5 +1,12 @@
 global _main							; making entry point visible to linker
 
+global gdt_refresh
+global read_pc
+global idt_refresh
+global halt_execution
+
+;Also exports _irq[0-15]
+
 extern kmain							; kmain is defined in kmain.c
 
 ; setting up the Multiboot header - see GRUB docs for details
@@ -33,13 +40,16 @@ _main:
 	hlt									; halt machine should kernel return
 	jmp .hang
 
-global halt_execution
+
 halt_execution:
     hlt
     jmp halt_execution
 
+read_pc:
+	pop eax
+	jmp eax
+
 ; Global Descriptor Table
-global gdt_refresh
 extern gdt_ptr
 gdt_refresh:
     lgdt [gdt_ptr]
@@ -54,7 +64,6 @@ gdt_refresh2:
     ret
 
 ; Interrupt Descriptor Table
-global idt_refresh
 extern idt_ptr
 idt_refresh:
     lidt [idt_ptr]

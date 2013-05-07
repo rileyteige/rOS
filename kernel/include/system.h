@@ -49,6 +49,10 @@ extern void kvprintf(const char *format, va_list args);
 extern void* kmalloc(size_t bytes);
 extern void kfree(void* ptr);
 
+/* Tasking */
+extern void tasking_init();
+extern uint32_t read_pc();
+
 /* Debug */
 
 #define assert(x) do { \
