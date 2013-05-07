@@ -35,6 +35,7 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
     gdt_init();
     idt_init();
     irq_init();
+    isr_init();
     
     /* Kernel heap */
     heap_init();

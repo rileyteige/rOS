@@ -32,6 +32,10 @@ extern void irq_init();
 extern void irq_register_handler(int irq, irq_handler_t handler);
 extern void irq_unregister_handler(int irq);
 
+extern void isr_init();
+extern void isr_register_handler(int isr, irq_handler_t handler);
+extern void isr_unregister_handler(int isr);
+
 /* Devices */
 extern void timer_init();
 extern void timer_set_frequency(int hz);
