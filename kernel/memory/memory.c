@@ -46,6 +46,9 @@ void heap_init()
     heap.first->size = HEAP_SIZE - heap_header_size;
     heap.first->flags = 0;
     
+    /* Space for the first header */
+    heap.size_available -= sizeof(heap_entry_t) - sizeof(void*);
+    
     memory_initialized = 1;
 }
 
