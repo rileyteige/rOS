@@ -2,15 +2,15 @@
 #include <va_list.h>
 #include <video.h>
 
-unsigned int max_power_of_ten(unsigned int num)
+unsigned int max_power(unsigned int num, unsigned int base)
 {
     unsigned int rval = 1;
     while (num)
     {
-        rval *= 10;
-        num /= 10;
+        rval *= base;
+        num /= base;
     }
-    return rval;
+    return rval / base;
 }
 
 void put_int(int x)
@@ -26,7 +26,7 @@ void put_int(int x)
         return;
     }
     
-    unsigned int pow10 = max_power_of_ten(x) / 10;
+    unsigned int pow10 = max_power(x, 10);
     
     while (pow10 > 0)
     {
@@ -34,6 +34,33 @@ void put_int(int x)
         put_char(digit + '0');
         x -= digit * pow10;
         pow10 /= 10;
+    }
+}
+
+void put_hex(int x)
+{
+    if (x < 0)
+    {
+        put_char('-');
+        x = abs(x);
+    }
+    else if (x == 0)
+    {
+        put_char('0');
+        return;
+    }
+    
+    unsigned int pow16 = max_power(x, 16);
+    
+    while (pow16 > 0) {
+        unsigned int digit = x / pow16;
+        if (digit < 10) {
+            put_char(digit + '0');
+        } else {
+            put_char(digit - 10 + 'A');
+        }
+        x -= digit * pow16;
+        pow16 /= 16;
     }
 }
 
@@ -69,6 +96,9 @@ extern void kvprintf(const char *format, va_list args)
                 break;
             case 'd':
                 put_int((int)va_arg(args, int));
+                break;
+            case 'x':
+                put_hex((int)va_arg(args, int));
                 break;
             case '%':
                 put_char('%');
