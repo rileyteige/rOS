@@ -48,6 +48,18 @@ void outportb(uint16_t port, uint8_t data)
     asm volatile ("outb %1, %0" : : "dN" (port), "a" (data));
 }
 
+uint16_t inports(uint16_t port)
+{
+    uint16_t ret;
+    asm volatile ("inw %1, %0" : "=a" (ret) : "dN" (port));
+    return ret;
+}
+
+void outports(uint16_t port, uint16_t data)
+{
+    asm volatile ("outw %1, %0" : : "dN" (port), "a" (data));
+}
+
 unsigned int strlen(const char *str)
 {
     int i = 0;

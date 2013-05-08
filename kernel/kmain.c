@@ -68,8 +68,7 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
         return;
 
-    cli();
-    reset();
+    graphics_init();
 
     /* Core modules */
     gdt_init();

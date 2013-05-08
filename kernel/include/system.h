@@ -41,7 +41,9 @@ extern void keyboard_init();
 
 /* Ports */
 extern uint8_t inportb(uint16_t port);
+extern uint16_t inports(uint16_t port);
 extern void outportb(uint16_t port, uint8_t data);
+extern void outports(uint16_t port, uint16_t data);
 
 /* Interrupts Flag */
 extern void cli();
@@ -59,6 +61,9 @@ extern void kfree(void* ptr);
 /* Tasking */
 extern void tasking_init();
 extern uint32_t read_pc();
+
+/* Graphics */
+extern void graphics_init();
 
 /* Debug */
 #define assert(x) do { \
