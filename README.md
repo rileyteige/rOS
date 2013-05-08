@@ -16,6 +16,6 @@ bochs
 Then the bochs environment will start and when prompted by grub, enter the following:
 
 ```
-kernel 200+18
+kernel 200+100
 boot
 ```
