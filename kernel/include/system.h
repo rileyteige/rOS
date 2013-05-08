@@ -19,9 +19,6 @@ extern void* memset(void* loc, int val, size_t size);
 
 extern unsigned int strlen(const char *str);
 
-/* Memory map */
-extern void process_memory_map(multiboot_info_t* mbd);
-
 /* Descriptor Tables */
 extern void gdt_init();
 
@@ -64,15 +61,11 @@ extern void tasking_init();
 extern uint32_t read_pc();
 
 /* Debug */
-#if 1
 #define assert(x) do { \
         if (!(x)) { \
             panic("Assertion failed: %s\n\nFile: %s\nLine: %d\n", #x, __FILE__, __LINE__); \
         } \
     } while (0);
-#else
-#define assert(x) 
-#endif
 
 extern void panic(const char *format, ...);
 extern void halt_execution();

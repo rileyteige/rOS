@@ -15,7 +15,7 @@ typedef struct heap_entry {
     uint8_t check;
     uint8_t flags;
     void* data;
-} heap_entry_t;
+} __attribute__((packed)) heap_entry_t;
 
 typedef struct {
     heap_entry_t* first;
@@ -39,8 +39,6 @@ static inline size_t align(unsigned int i, unsigned int align_to)
  */
 void heap_init()
 {
-    kprintf("Initializing kernel heap...\n");
-
     size_t heap_header_size = align(sizeof(heap_entry_t) - sizeof(void*), 4);
     
     heap.first->prev = NULL;

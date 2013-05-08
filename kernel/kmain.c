@@ -3,48 +3,64 @@
 #include <system.h>
 #include <video.h>
 
+#define testing() kprintf("Testing %s...\n", test_name)
+#define test_failed(x) { kprintf("%s test failed: %s\n", test_name, x); return; }
+
 void test_list()
 {
-    kprintf("Testing list...\n");
+    int actuals[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    const char* test_name = "linked list";
+    
+    testing();
+    
     int i = 0;
     list_t* list = list_create();
+    
+    if (!list)
+        test_failed("null list");
+    
     for (i = 0; i < 10; i++) {
         int* val = kmalloc(sizeof(int));
         *val = i + 1;
         list_push(list, val);
     }
     
-    kprintf("Nums: ");
-    int* val;
-    while ((val = (int*)list_pop(list))) {
-        kprintf("%d ", *val);
+    int* val = NULL;
+    for (i = 9; i >= 0; i--) {
+        val = (int*)list_pop(list);
+        if (!val)
+            test_failed("null value");
+        if (*val != actuals[i]) {
+            kprintf("*val == %d, actuals[%d] == %d\n", *val, i, actuals[i]);
+            test_failed("bad value");
+        }
     }
-    kprintf("\n");
     
     list_destroy(list);
-    
-    kprintf("List test passed.\n");
 }
 
 void test_kmalloc_kfree()
 {
-    kprintf("Testing kmalloc...\n");
+    int actuals[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    const char* test_name = "heap";
+    
+    testing();
+    
     int i = 0;
     int* nums = kmalloc(10 * sizeof(int));
-    if (nums == NULL) {
-        kprintf("kmalloc test failed.\n");
-        return;
-    }
+    if (!nums)
+        test_failed("null kmalloc");
+    
     for (i = 0; i < 10; i++) {
         nums[i] = i + 1;
     }
-    kprintf("Nums: ");
-    for(i = 0; i < 10; i++)
-        kprintf("%d ", nums[i]);
-    kprintf("\n");
-    kprintf("Calling kfree...\n");
+    
+    for(i = 0; i < 10; i++) {
+        if (nums[i] != actuals[i])
+            test_failed("bad value");
+    }
+    
     kfree(nums);
-    kprintf("kmalloc test passed.\n");
 }
 
 void kmain(multiboot_info_t* mbt, unsigned int magic)
@@ -72,8 +88,10 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
     /* Let the games begin */
     sti();
     
+    kprintf("Running kernel tests...\n\n");
     test_kmalloc_kfree();
     test_list();
+    kprintf("\nDone with kernel tests.\n");
     
     for (;;);
 }
