@@ -95,4 +95,6 @@ void isr_init()
 
 void isr_router(struct regs *r)
 {
+    uint32_t int_num = r->int_num;
+    unhandled_exception(int_num, r);
 }

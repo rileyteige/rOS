@@ -141,6 +141,23 @@ ISR 31
 extern isr_router
 isr_router_call:
     pushad
+    push ds
+    push es
+    push fs
+    push gs
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov eax, esp
+    push eax
+    call isr_router
+    pop eax
+    pop gs
+    pop fs
+    pop es
+    pop ds
     popad
     add esp, 8
     iret

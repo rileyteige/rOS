@@ -73,6 +73,7 @@ extern void graphics_init();
     } while (0);
 
 extern void panic(const char *format, ...);
+extern void unhandled_exception(uint32_t interrupt, struct regs* r);
 extern void halt_execution();
 
 #define NULL ((void*)0)
