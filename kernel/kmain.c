@@ -1,6 +1,30 @@
+#include <list.h>
 #include <multiboot.h>
 #include <system.h>
 #include <video.h>
+
+void test_list()
+{
+    kprintf("Testing list...\n");
+    int i = 0;
+    list_t* list = list_create();
+    for (i = 0; i < 10; i++) {
+        int* val = kmalloc(sizeof(int));
+        *val = i + 1;
+        list_push(list, val);
+    }
+    
+    kprintf("Nums: ");
+    int* val;
+    while ((val = (int*)list_pop(list))) {
+        kprintf("%d ", *val);
+    }
+    kprintf("\n");
+    
+    list_destroy(list);
+    
+    kprintf("List test passed.\n");
+}
 
 void test_kmalloc_kfree()
 {
@@ -49,6 +73,7 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
     sti();
     
     test_kmalloc_kfree();
+    test_list();
     
     for (;;);
 }

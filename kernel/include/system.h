@@ -8,7 +8,7 @@
 #define KB 1024
 
 /* Kernel heap size, in bytes */
-#define HEAP_SIZE 8 * KB
+#define HEAP_SIZE 16 * KB
 
 extern int max(int a, int b);
 extern int min(int a, int b);
