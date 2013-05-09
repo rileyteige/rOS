@@ -13,14 +13,29 @@ unsigned int max_power(unsigned int num, unsigned int base)
     return rval / base;
 }
 
-void put_int(int x)
+void put_int(int x, uint8_t width)
 {
+    int i = 1;
+    int8_t pad_width = width;
+    while (i < x)
+    {
+        i *= 10;
+        --pad_width;
+    }
+
     if (x < 0)
     {
         put_char('-');
         x = abs(x);
     }
-    else if (x == 0)
+    
+    while (pad_width > 0)
+    {
+        put_char('0');
+        --pad_width;
+    }
+    
+    if (x == 0)
     {
         put_char('0');
         return;
@@ -37,14 +52,29 @@ void put_int(int x)
     }
 }
 
-void put_hex(int x)
+void put_hex(int x, int width)
 {
+    int i = 1;
+    int8_t pad_width = width;
+    while (i < x)
+    {
+        i *= 16;
+        --pad_width;
+    }
+
     if (x < 0)
     {
         put_char('-');
         x = abs(x);
     }
-    else if (x == 0)
+    
+    while (pad_width > 0)
+    {
+        put_char('0');
+        --pad_width;
+    }
+    
+    if (x == 0)
     {
         put_char('0');
         return;
@@ -78,13 +108,24 @@ extern void kvprintf(const char *format, va_list args)
     int len = strlen(format);
     for (i = 0; i < len && format[i] != '\0'; i++)
     {
+        /* Regular character */
         if (format[i] != '%')
         {
             put_char(format[i]);
             continue;
         }
         
+        /* Skip over the '%' character */
         ++i;
+        
+        /* Min-width numerical value */
+        uint8_t width = 0;
+        while (format[i] >= '0' && format[i] <= '9')
+        {
+            width *= 10;
+            width += format[i] - '0';
+            ++i;
+        }
         
         switch(format[i])
         {
@@ -95,10 +136,10 @@ extern void kvprintf(const char *format, va_list args)
                 put_char((char)va_arg(args, int));
                 break;
             case 'd':
-                put_int((int)va_arg(args, int));
+                put_int((int)va_arg(args, int), width);
                 break;
             case 'x':
-                put_hex((int)va_arg(args, int));
+                put_hex((int)va_arg(args, int), width);
                 break;
             case '%':
                 put_char('%');
