@@ -17,7 +17,7 @@ void put_int(int x, uint8_t width)
 {
     int i = 1;
     int8_t pad_width = width;
-    while (i < x)
+    while (i <= x)
     {
         i *= 10;
         --pad_width;
@@ -35,12 +35,6 @@ void put_int(int x, uint8_t width)
         --pad_width;
     }
     
-    if (x == 0)
-    {
-        put_char('0');
-        return;
-    }
-    
     unsigned int pow10 = max_power(x, 10);
     
     while (pow10 > 0)
@@ -56,7 +50,7 @@ void put_hex(int x, int width)
 {
     int i = 1;
     int8_t pad_width = width;
-    while (i < x)
+    while (i <= x)
     {
         i *= 16;
         --pad_width;
@@ -72,12 +66,6 @@ void put_hex(int x, int width)
     {
         put_char('0');
         --pad_width;
-    }
-    
-    if (x == 0)
-    {
-        put_char('0');
-        return;
     }
     
     unsigned int pow16 = max_power(x, 16);

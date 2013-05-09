@@ -41,7 +41,7 @@ void put_char(char c)
 void clear()
 {
     int i = 0;
-    for (i = 0; i < ROW_WIDTH * 25; i++)
+    for (i = 0; i < ROW_WIDTH * 50; i++)
         put_char(' ');
 }
 
