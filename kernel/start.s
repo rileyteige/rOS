@@ -5,6 +5,7 @@ global read_pc
 global idt_refresh
 global halt_execution
 global context_save
+global context_load
 
 ;Also exports _irq[0-15]
 
@@ -208,6 +209,21 @@ context_save:
     mov [eax+CTX_EDI_OFF], edi  ; edi
     mov [eax+CTX_ESI_OFF], esi  ; esi
     mov [eax+CTX_ESI_OFF], ebp  ; ebp
+    xor eax, eax
+    ret
+
+;
+; void context_load(context_t* c)
+;
+context_load:
+    mov eax, [esp+4]
+    mov esi, [eax+CTX_ESI_OFF]
+    mov edi, [eax+CTX_EDI_OFF]
+    mov ebx, [eax+CTX_EBX_OFF]
+    mov ebp, [eax+CTX_EBP_OFF]
+    mov esp, [eax+CTX_ESP_OFF]
+    mov ecx, [eax+CTX_EIP_OFF]
+    mov [esp], ecx
     xor eax, eax
     ret
 
