@@ -4,8 +4,6 @@ global gdt_refresh
 global read_pc
 global idt_refresh
 global halt_execution
-global context_save
-global context_load
 
 ;Also exports _irq[0-15]
 
@@ -188,44 +186,6 @@ irq_router_call:
     popad
     add esp, 8
     iret
-
-;
-; void context_save(context_t* c)
-;
-CTX_EBX_OFF equ 0
-CTX_EDX_OFF equ 4
-CTX_EIP_OFF equ 8
-CTX_ESP_OFF equ 12
-CTX_EDI_OFF equ 16
-CTX_ESI_OFF equ 20
-CTX_EBP_OFF equ 24
-context_save:
-    mov eax, [esp+4]            ; Load context address into eax
-    mov ecx, [esp]              ; Load instruction counter
-    mov [eax+CTX_EIP_OFF], ecx  ; return address
-    mov [eax+CTX_ESP_OFF], esp  ; stack top
-    mov [eax+CTX_EBX_OFF], ebx  ; ebx
-    mov [eax+CTX_EDX_OFF], edx  ; edx
-    mov [eax+CTX_EDI_OFF], edi  ; edi
-    mov [eax+CTX_ESI_OFF], esi  ; esi
-    mov [eax+CTX_ESI_OFF], ebp  ; ebp
-    xor eax, eax
-    ret
-
-;
-; void context_load(context_t* c)
-;
-context_load:
-    mov eax, [esp+4]
-    mov esi, [eax+CTX_ESI_OFF]
-    mov edi, [eax+CTX_EDI_OFF]
-    mov ebx, [eax+CTX_EBX_OFF]
-    mov ebp, [eax+CTX_EBP_OFF]
-    mov esp, [eax+CTX_ESP_OFF]
-    mov ecx, [eax+CTX_EIP_OFF]
-    mov [esp], ecx
-    xor eax, eax
-    ret
 
 section .bss
 

@@ -133,7 +133,5 @@ void irq_router(struct regs* r)
     if (handler != NULL)
         handler(r);
     
-    irq_finish();
-    
     sti();
 }

@@ -41,6 +41,15 @@ void list_destroy(list_t* list)
     list_free(list);
 }
 
+void list_empty(list_t* list)
+{
+    void* data = NULL;
+    while ((data = list_pop(list)))
+    {
+        kfree(data);
+    }
+}
+
 void* list_pop(list_t* list)
 {
     if (!list->tail)

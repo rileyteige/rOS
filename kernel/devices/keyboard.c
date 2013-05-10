@@ -20,6 +20,7 @@ uint8_t accept_key()
 void keyboard_interrupt_handler(struct regs* r)
 {
     accept_key();
+    irq_finish();
 }
 
 void keyboard_init()

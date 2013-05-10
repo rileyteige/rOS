@@ -28,6 +28,7 @@ extern void idt_set_entry(uint8_t idx, uint32_t base, uint16_t selector, uint8_t
 extern void irq_init();
 extern void irq_register_handler(int irq, irq_handler_t handler);
 extern void irq_unregister_handler(int irq);
+extern void irq_finish();
 
 extern void isr_init();
 extern void isr_register_handler(int isr, irq_handler_t handler);
@@ -60,6 +61,7 @@ extern void kfree(void* ptr);
 
 /* Tasking */
 extern void tasking_init();
+extern void task_switch();
 extern uint32_t read_pc();
 
 /* Graphics */

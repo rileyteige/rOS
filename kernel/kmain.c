@@ -63,6 +63,16 @@ void test_kmalloc_kfree()
     kfree(nums);
 }
 
+extern void _test_tasking();
+
+void test_tasking()
+{
+    const char* test_name = "tasking";
+
+    testing();
+    _test_tasking();
+}
+
 void kmain(multiboot_info_t* mbt, unsigned int magic)
 {
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
@@ -90,6 +100,7 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
     kprintf("Running kernel tests...\n\n");
     test_kmalloc_kfree();
     test_list();
+    test_tasking();
     kprintf("\nDone with kernel tests.\n");
     
     for (;;);

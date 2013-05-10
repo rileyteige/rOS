@@ -28,6 +28,7 @@ void* list_dequeue(list_t* list);
 
 void list_free(list_t* list);
 void list_destroy(list_t* list);
+void list_empty(list_t* list);
 
 void list_remove(list_t* list, void* data);
 

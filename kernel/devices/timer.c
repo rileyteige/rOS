@@ -36,6 +36,8 @@ void timer_interrupt_handler(struct regs* r)
         time++;
         tick = 0;
     }
+    irq_finish();
+    task_switch();
 }
 
 /*
