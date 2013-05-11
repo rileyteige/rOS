@@ -10,6 +10,9 @@ thread_t* current_thread;
 
 void switch_next_task();
 
+/*
+ * Multi-tasking initializer.
+ */
 void tasking_init()
 {
     ready_queue = list_create();
@@ -17,23 +20,37 @@ void tasking_init()
     current_thread = thread_create(0);
 }
 
+/*
+ * Returns a pointer to the current thread
+ * of execution.
+ */
 thread_t* get_current_thread()
 {
     return current_thread;
 }
 
+/*
+ * Oversees a context switch between two executing
+ * thread.
+ */
 void task_switch()
 {
     cli();
     uint32_t esp, ebp, eip;
     asm volatile ("mov %%esp, %0" : "=r" (esp));
     asm volatile ("mov %%ebp, %0" : "=r" (ebp));
+    
+    /*
+     * If we make the eip register hold the value
+     * returned by this function, execution will
+     * resume just as this function returns. In
+     * our case, we jump back to this point, but
+     * having forced eax to hold THREAD_MAGIC
+     * as opposed to the actual eip value, meaning
+     * the context switch is complete.
+     */
     eip = read_pc();
     if (eip == THREAD_MAGIC) {
-        /*
-         * This is where we jump back to
-         * in switch_next_task()
-         */
         list_empty(kill_queue);
         sti();
         return;
@@ -49,6 +66,10 @@ void task_switch()
     switch_next_task();
 }
 
+/*
+ * Performs a context switch to the next
+ * ready thread.
+ */
 void switch_next_task()
 {
     uint32_t esp, ebp, eip;

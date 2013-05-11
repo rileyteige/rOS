@@ -64,8 +64,9 @@ void test_kmalloc_kfree()
     kfree(nums);
 }
 
-#define NUM_THREADS 15
+#define NUM_THREADS 10
 int finished[NUM_THREADS] = { 0 };
+int x = 0;
 
 void test_thread_start()
 {
@@ -73,11 +74,11 @@ void test_thread_start()
     assert(t);
     int i, j;
     i = j = 0;
-    for (i = 0; i < 2; i++) {
-        for (j = 0; j < i * i; j++)
-            thread_yield();
-        
-        kprintf("%d ", t->id);
+    for (i = 0; i < 100000; i++) {
+        for (j = 0; j < 10; j++) {
+            x++;
+            x--;
+        }
     }
     
     finished[t->id - 1] = 1;
@@ -89,24 +90,32 @@ void test_tasking()
 
     testing();
     
-    thread_t* t[NUM_THREADS] = { NULL };
-    
-    int i = 0;
-    for (i = 0; i < NUM_THREADS; i++)
-        t[i] = thread_create(i + 1);
-    
-    for (i = 0; i < NUM_THREADS; i++)
-        thread_start(t[i], test_thread_start);
-    
-    int done = 0;
-    while (!done) {
-        done = 1;
+    int j = 0;
+    for (j = 0; j < 10; j++) {
+        x = 0;
+        thread_t* t[NUM_THREADS] = { NULL };
+        
+        int i = 0;
         for (i = 0; i < NUM_THREADS; i++) {
-            if (!finished[i]) {
-                done = 0;
-                break;
-            }  
+            t[i] = thread_create(i + 1);
+            finished[i] = 0;
         }
+        
+        for (i = 0; i < NUM_THREADS; i++)
+            thread_start(t[i], test_thread_start);
+        
+        int done = 0;
+        while (!done) {
+            done = 1;
+            for (i = 0; i < NUM_THREADS; i++) {
+                if (!finished[i]) {
+                    done = 0;
+                    break;
+                }  
+            }
+        }
+        
+        kprintf("x = %d\n", x);
     }
 }
 

@@ -27,6 +27,9 @@ void put_int(int x, uint8_t width)
     {
         put_char('-');
         x = abs(x);
+    } else if (x == 0 && width == 0) {
+        put_char('0');
+        return;
     }
     
     while (pad_width > 0)
@@ -60,6 +63,9 @@ void put_hex(int x, int width)
     {
         put_char('-');
         x = abs(x);
+    } else if (x == 0 && width == 0) {
+        put_char('0');
+        return;
     }
     
     while (pad_width > 0)
