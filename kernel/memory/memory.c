@@ -153,7 +153,6 @@ void kfree(void* ptr)
     
     entry->flags ^= HEAP_ENTRY_USED;
     heap.size_available += entry_size(entry);
-    
     assert(heap.size_available <= HEAP_SIZE);
     
     if (entry->prev && !(entry->prev->flags & HEAP_ENTRY_USED)) {

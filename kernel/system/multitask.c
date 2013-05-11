@@ -10,21 +10,6 @@ thread_t* current_thread;
 
 void switch_next_task();
 
-int finished[3] = { 0 };
-
-void test_thread_start()
-{
-    int i, j;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 1000000; j++);
-        kprintf("Hello from thread %d\n", current_thread->id);
-        for (j = 0; j < 50 * current_thread->id; j++)
-            task_switch();
-    }
-    finished[current_thread->id - 1] = 1;
-    thread_finish(current_thread);
-}
-
 void tasking_init()
 {
     ready_queue = list_create();
@@ -32,19 +17,9 @@ void tasking_init()
     current_thread = thread_create(0);
 }
 
-void _test_tasking()
+thread_t* get_current_thread()
 {
-    thread_t* test = thread_create(1);
-    thread_t* test2 = thread_create(2);
-    thread_t* test3 = thread_create(3);
-    thread_t* test4 = thread_create(4);
-    
-    thread_start(test, test_thread_start);
-    thread_start(test2, test_thread_start);
-    thread_start(test3, test_thread_start);
-    thread_start(test4, test_thread_start);
-    
-    while (!(finished[0] && finished[1] && finished[2] && finished[3]));
+    return current_thread;
 }
 
 void task_switch()

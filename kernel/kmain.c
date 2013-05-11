@@ -1,6 +1,7 @@
 #include <list.h>
 #include <multiboot.h>
 #include <system.h>
+#include <thread.h>
 #include <video.h>
 
 #define testing() kprintf("Testing %s...\n", test_name)
@@ -63,14 +64,50 @@ void test_kmalloc_kfree()
     kfree(nums);
 }
 
-extern void _test_tasking();
+#define NUM_THREADS 15
+int finished[NUM_THREADS] = { 0 };
+
+void test_thread_start()
+{
+    thread_t* t = get_current_thread();
+    assert(t);
+    int i, j;
+    i = j = 0;
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < i * i; j++)
+            thread_yield();
+        
+        kprintf("%d ", t->id);
+    }
+    
+    finished[t->id - 1] = 1;
+}
 
 void test_tasking()
 {
     const char* test_name = "tasking";
 
     testing();
-    _test_tasking();
+    
+    thread_t* t[NUM_THREADS] = { NULL };
+    
+    int i = 0;
+    for (i = 0; i < NUM_THREADS; i++)
+        t[i] = thread_create(i + 1);
+    
+    for (i = 0; i < NUM_THREADS; i++)
+        thread_start(t[i], test_thread_start);
+    
+    int done = 0;
+    while (!done) {
+        done = 1;
+        for (i = 0; i < NUM_THREADS; i++) {
+            if (!finished[i]) {
+                done = 0;
+                break;
+            }  
+        }
+    }
 }
 
 void kmain(multiboot_info_t* mbt, unsigned int magic)

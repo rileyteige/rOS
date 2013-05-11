@@ -2,6 +2,7 @@
 #define __SYSTEM_H
 
 #include <multiboot.h>
+#include <thread.h>
 #include <types.h>
 #include <va_list.h>
 
@@ -63,6 +64,7 @@ extern void kfree(void* ptr);
 extern void tasking_init();
 extern void task_switch();
 extern uint32_t read_pc();
+extern thread_t* get_current_thread();
 
 /* Graphics */
 extern void graphics_init();

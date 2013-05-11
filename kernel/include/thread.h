@@ -9,12 +9,14 @@
 typedef struct {
     context_t context;
     int id, finished;
+    void (*start_func)();
     void* kernel_stack;
 } thread_t;
 
 thread_t* thread_create();
 
 void thread_start(thread_t* t, void (*func)());
+void thread_yield();
 
 void thread_finish();
 
