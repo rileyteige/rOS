@@ -8,7 +8,7 @@
 #define KB 1024
 
 /* Kernel heap size, in bytes */
-#define HEAP_SIZE 16 * KB
+#define HEAP_SIZE (1024 * KB)
 
 extern int max(int a, int b);
 extern int min(int a, int b);
@@ -68,11 +68,15 @@ extern uint32_t read_pc();
 extern void graphics_init();
 
 /* Debug */
+#if 0
 #define assert(x) do { \
         if (!(x)) { \
             panic("Assertion failed: %s\n\nFile: %s\nLine: %d\n", #x, __FILE__, __LINE__); \
         } \
     } while (0);
+#else
+#define assert(x)
+#endif
 
 extern void panic(const char *format, ...);
 extern void unhandled_exception(uint32_t interrupt, struct regs* r);
