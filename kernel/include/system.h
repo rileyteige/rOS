@@ -7,9 +7,10 @@
 #include <va_list.h>
 
 #define KB 1024
+#define MB (1024 * KB)
 
 /* Kernel heap size, in bytes */
-#define HEAP_SIZE (1024 * KB)
+#define HEAP_SIZE (2 * MB)
 
 extern int max(int a, int b);
 extern int min(int a, int b);

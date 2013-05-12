@@ -64,7 +64,7 @@ void test_kmalloc_kfree()
     kfree(nums);
 }
 
-#define NUM_THREADS 10
+#define NUM_THREADS 5
 int finished[NUM_THREADS] = { 0 };
 int x = 0;
 
@@ -74,11 +74,13 @@ void test_thread_start()
     assert(t);
     int i, j;
     i = j = 0;
-    for (i = 0; i < 100000; i++) {
-        for (j = 0; j < 10; j++) {
+    for (i = 0; i < 250; i++) {
+        for (j = 0; j < 2500; j++) {
             x++;
             x--;
         }
+        for (j = 0; j < t->id; j++)
+            thread_yield();
     }
     
     finished[t->id - 1] = 1;
@@ -88,7 +90,7 @@ void test_tasking()
 {
     const char* test_name = "tasking";
 
-    testing();
+    kprintf("Testing %s...", test_name);
     
     int j = 0;
     for (j = 0; j < 10; j++) {
@@ -115,8 +117,13 @@ void test_tasking()
             }
         }
         
-        kprintf("x = %d\n", x);
+        kprintf(".");
+        if (x != 0) {
+            kprintf("\n");
+            test_failed("x != 0");
+        }
     }
+    kprintf("\n");
 }
 
 void kmain(multiboot_info_t* mbt, unsigned int magic)
