@@ -1,7 +1,7 @@
 #ifndef __LIST_H
 #define __LIST_H
 
-#include <system.h>
+#include <types.h>
 
 typedef struct node {
     struct node* prev;

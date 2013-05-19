@@ -2,7 +2,7 @@
 #include <video.h>
 
 #define TIMER_IRQ 0
-#define TIMER_FREQUENCY 200
+#define TIMER_FREQUENCY 100
 
 /* Programmable Interrupt Timer (PIT) definitions */
 #define PIT 0x40

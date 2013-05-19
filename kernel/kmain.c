@@ -64,26 +64,32 @@ void test_kmalloc_kfree()
     kfree(nums);
 }
 
-#define NUM_THREADS 5
+#define NUM_THREADS 10
 int finished[NUM_THREADS] = { 0 };
 int x = 0;
+mutex_t* test_mutex = NULL;
 
 void test_thread_start()
 {
     thread_t* t = get_current_thread();
     assert(t);
-    int i, j;
-    i = j = 0;
-    for (i = 0; i < 250; i++) {
-        for (j = 0; j < 2500; j++) {
-            x++;
-            x--;
+    int i, j, k;
+    i = j = k = 0;
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 5; j++) {
+            mutex_lock(test_mutex);
+            for (k = 0; k < 500; k++) {
+                x++;
+                x--;
+            }
+            mutex_unlock(test_mutex);
         }
-        for (j = 0; j < t->id; j++)
+        for (j = 0; j < t->id; j++) {
             thread_yield();
+        }
     }
-    
-    finished[t->id - 1] = 1;
+
+    finished[t->id - 2] = 1;
 }
 
 void test_tasking()
@@ -91,6 +97,8 @@ void test_tasking()
     const char* test_name = "tasking";
 
     kprintf("Testing %s...", test_name);
+
+    test_mutex = mutex_create();
     
     int j = 0;
     for (j = 0; j < 10; j++) {
@@ -99,13 +107,13 @@ void test_tasking()
         
         int i = 0;
         for (i = 0; i < NUM_THREADS; i++) {
-            t[i] = thread_create(i + 1);
+            t[i] = thread_create(i + 2);
             finished[i] = 0;
         }
         
         for (i = 0; i < NUM_THREADS; i++)
             thread_start(t[i], test_thread_start);
-        
+
         int done = 0;
         while (!done) {
             done = 1;
@@ -115,8 +123,9 @@ void test_tasking()
                     break;
                 }  
             }
+            thread_yield();
         }
-        
+
         kprintf(".");
         if (x != 0) {
             kprintf("\n");
@@ -124,6 +133,8 @@ void test_tasking()
         }
     }
     kprintf("\n");
+    
+    mutex_free(test_mutex);
 }
 
 void kmain(multiboot_info_t* mbt, unsigned int magic)
@@ -148,7 +159,7 @@ void kmain(multiboot_info_t* mbt, unsigned int magic)
     keyboard_init();
     
     /* Let the games begin */
-    sti();
+    set_interrupts(ENABLED);
     
     kprintf("Running kernel tests...\n\n");
     test_kmalloc_kfree();

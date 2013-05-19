@@ -19,9 +19,13 @@ all: bin/floppy.img bochsrc.txt
  #  boot image  #
  ################
 
+# A floppy has to have the industry "1.44" MB
+FLOPPY_SIZE = 1474560
+
 bin/floppy.img: image/kernel.bin image/pad
 	@echo "Constructing kernel image..."
 	@cat image/stage1 image/stage2 image/pad image/kernel.bin > image/floppy.img
+	@truncate -s ${FLOPPY_SIZE} image/floppy.img
 	@echo "Copying kernel image to ./bin/..."
 	@mkdir -p bin
 	@cp bochsrc.txt bin/bochsrc.txt

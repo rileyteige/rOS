@@ -10,7 +10,7 @@
 #define MB (1024 * KB)
 
 /* Kernel heap size, in bytes */
-#define HEAP_SIZE (2 * MB)
+#define HEAP_SIZE (4 * MB)
 
 extern int max(int a, int b);
 extern int min(int a, int b);
@@ -49,8 +49,8 @@ extern void outportb(uint16_t port, uint8_t data);
 extern void outports(uint16_t port, uint16_t data);
 
 /* Interrupts Flag */
-extern void cli();
-extern void sti();
+enum { ENABLED = 0, DISABLED };
+extern uint8_t set_interrupts(uint8_t s);
 
 /* kprintf */
 extern void kprintf(const char *format, ...);
@@ -58,6 +58,7 @@ extern void kvprintf(const char *format, va_list args);
 
 /* Dynamic kernel memory */
 extern void heap_init();
+extern void heap_init_multitasking();
 extern void* kmalloc(size_t bytes);
 extern void kfree(void* ptr);
 
@@ -66,15 +67,20 @@ extern void tasking_init();
 extern void task_switch();
 extern uint32_t read_pc();
 extern thread_t* get_current_thread();
+extern void make_thread_ready(thread_t* t);
+extern uint8_t is_multitasking_running();
+extern void clean_up_threads();
 
 /* Graphics */
 extern void graphics_init();
 
 /* Debug */
-#if 0
+#if 1
 #define assert(x) do { \
         if (!(x)) { \
-            panic("Assertion failed: %s\n\nFile: %s\nLine: %d\n", #x, __FILE__, __LINE__); \
+        	set_interrupts(DISABLED); \
+            kprintf("\nAssertion failed: '%s'\nFile: %s(%d)\n", #x, __FILE__, __LINE__); \
+            halt_execution(); \
         } \
     } while (0);
 #else

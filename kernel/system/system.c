@@ -2,6 +2,8 @@
 
 #include <system.h>
 
+uint8_t current_interrupt_status = DISABLED;
+
 int max(int a, int b)
 {
     return a > b ? a : b;
@@ -76,4 +78,20 @@ void cli()
 void sti()
 {
     asm("sti");
+}
+
+uint8_t set_interrupts(uint8_t status)
+{
+    uint8_t old_status = current_interrupt_status;
+    current_interrupt_status = status;
+    if (current_interrupt_status != old_status) {
+        //kprintf("%c", status == ENABLED ? 's' : 'c');
+    }
+    if (status == ENABLED) {
+        sti();
+    } else if (status == DISABLED) {
+        cli();
+    }
+
+    return old_status;
 }

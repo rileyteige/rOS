@@ -13,6 +13,8 @@ thread_t* thread_create(int id)
 {
     thread_t* t = (thread_t*)kmalloc(sizeof(thread_t));
     t->id = id;
+    t->finished = 0;
+    t->sleeping = 0;
     return t;
 }
 
@@ -34,8 +36,13 @@ void thread_finish(thread_t* t)
 {
     t->finished = 1;
     kfree(t->kernel_stack);
+    t->kernel_stack = NULL;
+
+    uint8_t old_status = set_interrupts(DISABLED);
     list_enqueue(kill_queue, t);
-    task_switch();
+    set_interrupts(old_status);
+
+    thread_yield();
 }
 
 /*
@@ -70,7 +77,7 @@ void thread_start(thread_t* t, void (*func)())
     t->finished = 0;
     
     /* The thread is now ready to execute. */
-    list_enqueue(ready_queue, t);
+    make_thread_ready(t);
 }
 
 /*
@@ -81,5 +88,18 @@ void thread_start(thread_t* t, void (*func)())
  */
 void thread_yield()
 {
+    assert(current_thread);
     task_switch();
+}
+
+/*
+ * Yields execution of the thread. Does not requeue for
+ * further execution (this must be triggered by an external
+ * thread).
+ */
+void thread_sleep()
+{
+    assert(current_thread);
+    current_thread->sleeping = 1;
+    thread_yield();
 }

@@ -4,11 +4,17 @@
 
 #define THREAD_MAGIC 0xDEADBEEF
 
-list_t* ready_queue;
-list_t* kill_queue;
-thread_t* current_thread;
+list_t* ready_queue = NULL;
+list_t* kill_queue = NULL;
+thread_t* current_thread = NULL;
 
 void switch_next_task();
+
+void spin()
+{
+    for (;;)
+        thread_yield();
+}
 
 /*
  * Multi-tasking initializer.
@@ -17,7 +23,9 @@ void tasking_init()
 {
     ready_queue = list_create();
     kill_queue = list_create();
-    current_thread = thread_create(0);
+    current_thread = thread_create(1);
+    thread_t* idle_thread = thread_create(0);
+    thread_start(idle_thread, spin);
 }
 
 /*
@@ -29,13 +37,43 @@ thread_t* get_current_thread()
     return current_thread;
 }
 
+uint8_t is_multitasking_running()
+{
+    return current_thread != NULL;
+}
+
+void clean_up_threads()
+{
+    list_empty(kill_queue);
+}
+
+void make_thread_ready(thread_t* t)
+{
+    assert(t);
+    assert(!t->finished);
+
+    t->sleeping = 0;
+
+    uint8_t old_status = set_interrupts(DISABLED);
+
+    list_enqueue(ready_queue, t);
+
+    set_interrupts(old_status);
+}
+
 /*
  * Oversees a context switch between two executing
  * thread.
  */
 void task_switch()
 {
-    cli();
+    set_interrupts(DISABLED);
+
+    if (!is_multitasking_running())
+        return;
+
+    assert(current_thread);
+
     uint32_t esp, ebp, eip;
     asm volatile ("mov %%esp, %0" : "=r" (esp));
     asm volatile ("mov %%ebp, %0" : "=r" (ebp));
@@ -51,8 +89,8 @@ void task_switch()
      */
     eip = read_pc();
     if (eip == THREAD_MAGIC) {
-        list_empty(kill_queue);
-        sti();
+        clean_up_threads();
+        set_interrupts(ENABLED);
         return;
     }
     
@@ -60,7 +98,7 @@ void task_switch()
     current_thread->context.esp = esp;
     current_thread->context.ebp = ebp;
     
-    if (!current_thread->finished)
+    if (!(current_thread->finished || current_thread->sleeping))
         list_enqueue(ready_queue, current_thread);
 
     switch_next_task();

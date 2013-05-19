@@ -43,6 +43,9 @@ void list_destroy(list_t* list)
 
 void list_empty(list_t* list)
 {
+    if (!list->length)
+        return;
+    
     void* data = NULL;
     while ((data = list_pop(list)))
     {

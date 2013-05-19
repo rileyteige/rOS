@@ -120,7 +120,7 @@ void irq_router(struct regs* r)
 {
     int int_num = r->int_num;
     
-    cli();
+    uint8_t old_status = set_interrupts(DISABLED);
     
     irq_handler_t handler;
     
@@ -133,5 +133,5 @@ void irq_router(struct regs* r)
     if (handler != NULL)
         handler(r);
     
-    sti();
+    set_interrupts(old_status);
 }
